@@ -4,7 +4,7 @@ const apiController = require('../app/index.js');
 // 对经过这边的api进行分发
 const defaultController =  async (ctx, next) => {
   if (apiController[ctx.params.controller]) {
-    ctx.body = await apiController[ctx.params.controller](ctx);
+    ctx.body = apiController[ctx.params.controller](ctx);
   } else {
     ctx.body= {
       data: {

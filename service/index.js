@@ -124,6 +124,7 @@ MCServer.prototype.start = function(callback) {
     err.name = '项目重启'
     Raven.captureException(err, {
       level: 'info',
+      extra: this.options,
       tags: {
         port
       }

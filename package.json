@@ -1,6 +1,6 @@
 {
   "name": "@mc/fe-server",
-  "version": "0.2.0",
+  "version": "1.0.1",
   "description": "前端服务",
   "main": "entry.js",
   "scripts": {
@@ -17,9 +17,6 @@
   "author": "yanweiqing,zhangziyuan",
   "license": "ISC",
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
     "colors": "^1.3.2",
     "config": "^0.4.26",
     "handlebars": "^4.0.12",

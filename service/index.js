@@ -77,7 +77,6 @@ MCServer.prototype.load = function(tool) {
   if (tool.constructor.name === 'GeneratorFunction') {
     middleware = tool;
   } else {
-    console.log(321);
     middleware = tool(this.app, this.options);
   }
   */

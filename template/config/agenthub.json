@@ -1,9 +1,0 @@
-{
-  "server": "192.168.64.223:3000",
-  "appid": "76176",
-  "secret": "f6df91bab21880980a6ec1b0dbdb876a09c7b17fWQ",
-  "logdir": "/data/logs/X",
-  "error_log": [],
-  "packages": "./package.json",
-  "disks": ["/"]
-}

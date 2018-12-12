@@ -1,8 +1,0 @@
-{
-  "url": {
-    "mallApi": "https://wxtest.yunshanmeicai.com/mall"
-  },
-  "sentry": {
-    "DSN": "https://b0fd30922d6d40d4b06a03e5fa54cdaa@spruce-sentry.stage.yunshanmeicai.com/88"
-  }
-}

@@ -1,3 +1,1 @@
-var server = require('./service/index.js');
-
-module.exports = server;
+module.exports = require('./service/index.js');

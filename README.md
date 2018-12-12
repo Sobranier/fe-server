@@ -1,8 +1,5 @@
 ## 提供前端页面的NODE服务
 
-版本^0.2.0支持babel6
-版本^1.0.0将会支持babel7
-
 > 采用 node 版本 v10.6.0
   通过 yarn install 来安装依赖
 
@@ -18,6 +15,3 @@
 ### 定位
 
 项目可以提供server服务也可以提供api服务，遵照相应的规则即可。
-
-### TODO
-* check babel 版本

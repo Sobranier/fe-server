@@ -1,7 +1,6 @@
 const Koa = require('koa');
 const path = require('path');
 const http = require('http');
-const koaStatic = require('koa-static');
 const views = require('koa-views');
 const onError = require('koa-onerror');
 const logger = require('koa-logger');
@@ -32,9 +31,6 @@ MCServer.prototype.loadDefault = function(tool) {
 
   // Logger 放置位置需要靠前一些
   this.app.use(logger());
-
-  // 静态资源
-  this.app.use(koaStatic(path.join(currentPath, 'public')));
 
   // 模版资源
   this.app.use(views(path.join(currentPath, 'views'), {
@@ -120,7 +116,7 @@ MCServer.prototype.start = function(callback) {
   // 启动监听
   server.on('listening', () => {
     let err = new Error('Start');
-    err.name = '项目重启'
+    err.name = '项目启动'
     Raven.captureException(err, {
       level: 'info',
       extra: this.options,
@@ -128,7 +124,7 @@ MCServer.prototype.start = function(callback) {
         port
       }
     }, function (error, eventId) {
-      console.log('Reported login: ' + eventId + ' on port: ' + port);
+      console.log('Reported start: ' + eventId + ' on port: ' + port);
     });
     callback && callback();
   })

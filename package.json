@@ -1,6 +1,6 @@
 {
   "name": "@mc/fe-server",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "前端服务",
   "main": "entry.js",
   "scripts": {
@@ -25,7 +25,6 @@
     "koa-logger": "^3.2.0",
     "koa-onerror": "^4.1.0",
     "koa-router": "^7.4.0",
-    "koa-static": "^5.0.0",
     "koa-views": "^6.1.4",
     "raven": "^2.6.4",
     "request": "^2.88.0",

@@ -49,10 +49,19 @@ MCServer.prototype.loadDefault = function(tool) {
   // 错误处理
   // sentry 注册
   this.app.on('error', error => {
+    error.extraName = 'appError';
     Raven.captureException(error, function (error, eventId) {
-      console.log('Reported io error: ' + eventId);  // eventId也可以记录到log当中方便追溯
+      console.log('Reported app error: ' + eventId);  // eventId也可以记录到log当中方便追溯
     });
   })
+
+  process.on('uncaughtException', function(error) {
+    err.name = "UncaughtExceptionError";
+    Raven.captureException(error, function (error, eventId) {
+      console.log('Reported uncaughtException error: ' + eventId);  // eventId也可以记录到log当中方便追溯
+      process.exit(1);
+    });
+  });
   return this;
 }
 
@@ -91,8 +100,9 @@ MCServer.prototype.start = function(callback) {
 
   // 启动错误
   server.on('error', error => {
+    error.extraName = 'startError';
     Raven.captureException(error, function (error, eventId) {
-      console.log('Reported creash error: ' + eventId);
+      console.log('Reported start error: ' + eventId);
     });
     // 下面的代码根本没有生效
     if (error.syscall !== 'listen') {

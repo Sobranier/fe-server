@@ -7,8 +7,26 @@ const logger = require('koa-logger');
 const bodyParser = require('koa-bodyparser');
 const Raven = require('raven');
 const config = require('config');
+const log4js = require('log4js');
 
-var currentPath = process.cwd();
+log4js.configure({
+  appenders: {
+    out: {
+      type: 'console',
+    }
+  },
+  categories: {
+    default: {
+      appenders: ['out'], level: 'trace', 'replaceConsole': true
+    }
+  },
+  disableClustering: true,
+  pm2: true,
+  pm2InstanceVar: 'fe-server'
+});
+const log4 = log4js.getLogger('default');
+
+const currentPath = process.cwd();
 
 const MCServer = function(options) {
   if(!(this instanceof MCServer)){
@@ -17,6 +35,8 @@ const MCServer = function(options) {
   this.options = options || config;
   this.app = new Koa();
 };
+
+MCServer.logger = log4;
 
 MCServer.Controller = function() {
   return this;
@@ -30,7 +50,9 @@ MCServer.prototype.loadDefault = function(tool) {
   Raven.config(config.sentry.DSN).install();
 
   // Logger 放置位置需要靠前一些
-  this.app.use(logger());
+  this.app.use(logger((str, args) => {
+    log4.trace(str);
+  }));
 
   // 模版资源
   this.app.use(views(path.join(currentPath, 'views'), {

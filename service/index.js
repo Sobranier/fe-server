@@ -22,7 +22,7 @@ log4js.configure({
   },
   disableClustering: true,
   pm2: true,
-  pm2InstanceVar: 'fe-server'
+  // pm2InstanceVar: 'fe-server'
 });
 const log4 = log4js.getLogger('default');
 
@@ -73,14 +73,14 @@ MCServer.prototype.loadDefault = function(tool) {
   this.app.on('error', error => {
     error.extraName = 'appError';
     Raven.captureException(error, function (error, eventId) {
-      console.log('Reported app error: ' + eventId);  // eventId也可以记录到log当中方便追溯
+      log4.trace('Reported app error: ' + eventId);   // eventId也可以记录到log当中方便追溯
     });
   })
 
   process.on('uncaughtException', function(error) {
     err.name = "UncaughtExceptionError";
     Raven.captureException(error, function (error, eventId) {
-      console.log('Reported uncaughtException error: ' + eventId);  // eventId也可以记录到log当中方便追溯
+      log4.fatal('Reported uncaughtException error: ' + eventId);
       process.exit(1);
     });
   });
@@ -89,7 +89,7 @@ MCServer.prototype.loadDefault = function(tool) {
 
 MCServer.prototype.load = function(tool) {
   if(typeof tool === 'string') {
-    console.log("Load Middlewares: " + tool);
+    log4.trace("Load Middlewares: " + tool);
     try {
       tool = require(path.join(this.options.path.middlewares, tool));
     } catch (err) {
@@ -124,7 +124,7 @@ MCServer.prototype.start = function(callback) {
   server.on('error', error => {
     error.extraName = 'startError';
     Raven.captureException(error, function (error, eventId) {
-      console.log('Reported start error: ' + eventId);
+      log4.error('Reported start error: ' + eventId);
     });
     // 下面的代码根本没有生效
     if (error.syscall !== 'listen') {
@@ -133,11 +133,11 @@ MCServer.prototype.start = function(callback) {
 
     switch(error.code) {
       case 'EACCES':
-        console.error(`${port} requires elevated privileges`)
+        log4.error(`${port} requires elevated privileges`)
         process.exit(1)
         break
       case 'EADDRINUSE':
-       console.error(`${port} is already in use`)
+       log4.error(`${port} is already in use`)
        process.exit(1)
        break
       default:
@@ -156,7 +156,7 @@ MCServer.prototype.start = function(callback) {
         port
       }
     }, function (error, eventId) {
-      console.log('Reported start: ' + eventId + ' on port: ' + port);
+      log4.trace('Reported start: ' + eventId + ' on port: ' + port);
     });
     callback && callback();
   })

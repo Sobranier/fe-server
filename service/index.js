@@ -78,7 +78,7 @@ MCServer.prototype.loadDefault = function(tool) {
   })
 
   process.on('uncaughtException', function(error) {
-    err.name = "UncaughtExceptionError";
+    error.name = "UncaughtExceptionError";
     Raven.captureException(error, function (error, eventId) {
       log4.fatal('Reported uncaughtException error: ' + eventId);
       process.exit(1);
@@ -99,14 +99,6 @@ MCServer.prototype.load = function(tool) {
       tool = require(path.join(tool));
     }
   }
-
-  /*
-  if (tool.constructor.name === 'GeneratorFunction') {
-    middleware = tool;
-  } else {
-    middleware = tool(this.app, this.options);
-  }
-  */
 
   if (tool) {
     this.app.use(tool);

@@ -3,7 +3,6 @@ const path = require('path');
 const http = require('http');
 const views = require('koa-views');
 const onError = require('koa-onerror');
-const logger = require('koa-logger');
 const bodyParser = require('koa-bodyparser');
 const Raven = require('raven');
 const config = require('config');
@@ -48,11 +47,6 @@ MCServer.Controller.prototype.send = function(body) {
 
 MCServer.prototype.loadDefault = function(tool) {
   Raven.config(config.sentry.DSN).install();
-
-  // Logger 放置位置需要靠前一些
-  this.app.use(logger((str, args) => {
-    log4.trace(str);
-  }));
 
   // 模版资源
   this.app.use(views(path.join(currentPath, 'views'), {

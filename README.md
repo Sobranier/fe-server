@@ -1,6 +1,6 @@
 ## 提供前端页面的NODE服务
 
-> 采用 node 版本 v10.6.0
+> 采用 node 版本 v10.6.x
   通过 yarn install 来安装依赖
 
 

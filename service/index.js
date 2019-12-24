@@ -4,7 +4,6 @@ const http = require('http');
 const views = require('koa-views');
 const onError = require('koa-onerror');
 const bodyParser = require('koa-bodyparser');
-const Raven = require('raven');
 const config = require('config');
 const log4js = require('log4js');
 
@@ -20,8 +19,7 @@ log4js.configure({
     }
   },
   disableClustering: true,
-  pm2: true,
-  // pm2InstanceVar: 'fe-server'
+  pm2: true
 });
 const log4 = log4js.getLogger('default');
 
@@ -46,7 +44,6 @@ MCServer.Controller.prototype.send = function(body) {
 };
 
 MCServer.prototype.loadDefault = function(tool) {
-  Raven.config(config.sentry.DSN).install();
 
   // 模版资源
   this.app.use(views(path.join(currentPath, 'views'), {
@@ -63,27 +60,21 @@ MCServer.prototype.loadDefault = function(tool) {
   });
 
   // 错误处理
-  // sentry 注册
   this.app.on('error', error => {
-    error.extraName = 'appError';
-    Raven.captureException(error, function (error, eventId) {
-      log4.trace('Reported app error: ' + eventId);   // eventId也可以记录到log当中方便追溯
-    });
+    log4.error('MCServer -- App error: ', error);
   })
 
   process.on('uncaughtException', function(error) {
-    error.name = "UncaughtExceptionError";
-    Raven.captureException(error, function (error, eventId) {
-      log4.fatal('Reported uncaughtException error: ' + eventId);
-      process.exit(1);
-    });
+    log4.fatal(`MCServer -- UncaughtException error: ${process.pid}`, error);
+    process.exit(1);
   });
+
   return this;
 }
 
 MCServer.prototype.load = function(tool) {
   if(typeof tool === 'string') {
-    log4.trace("Load Middlewares: " + tool);
+    log4.trace(`MCServer -- Load Middlewares: ${tool}`);
     try {
       tool = require(path.join(this.options.path.middlewares, tool));
     } catch (err) {
@@ -108,10 +99,7 @@ MCServer.prototype.start = function(callback) {
 
   // 启动错误
   server.on('error', error => {
-    error.extraName = 'startError';
-    Raven.captureException(error, function (error, eventId) {
-      log4.error('Reported start error: ' + eventId);
-    });
+    log4.error('MCServer -- Start error');
     // 下面的代码根本没有生效
     if (error.syscall !== 'listen') {
       throw error
@@ -119,13 +107,13 @@ MCServer.prototype.start = function(callback) {
 
     switch(error.code) {
       case 'EACCES':
-        log4.error(`${port} requires elevated privileges`)
+        log4.error(`MCServer -- ${port} requires elevated privileges`)
         process.exit(1)
         break
       case 'EADDRINUSE':
-       log4.error(`${port} is already in use`)
-       process.exit(1)
-       break
+        log4.error(`MCServer -- ${port} is already in use`)
+        process.exit(1)
+        break
       default:
         throw error
     }
@@ -133,17 +121,6 @@ MCServer.prototype.start = function(callback) {
 
   // 启动监听
   server.on('listening', () => {
-    let err = new Error('Start');
-    err.name = '项目启动'
-    Raven.captureException(err, {
-      level: 'info',
-      extra: this.options,
-      tags: {
-        port
-      }
-    }, function (error, eventId) {
-      log4.trace('Reported start: ' + eventId + ' on port: ' + port);
-    });
     callback && callback();
   })
 
